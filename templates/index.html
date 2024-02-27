@@ -12,14 +12,17 @@
 
       <div class="container">
       <div class="card-deck mb-3 mt-3">
-        {% for posts in posts %}
+        {% for post in posts %}
         <div class="card">
-            <a href="{% url 'posts:detail' pk=posts.id %}" >
-                <img class="card-img-top" src="{{ posts.image.url}}" alt="Card image cap">
+            <a href="{% url 'posts:detail' pk=post.id %}" >
+                <img class="card-img-top" src="{{ post.image.url}}" alt="Card image cap">
             </a>
           <div class="card-body">
-            <h5 class="card-title">{{ posts.title }}</h5>
-            <p class="card-text">{{ posts.user.33username }}</p>
+            <h5 class="card-title">{{ post.title }}</h5>
+              <a href="{% url 'users:username' pk=post.user.id %}">
+                  <p class="card-text">{{ post.user.username }}</p>
+              </a>
+
             <p class="card-text"><small class="text-muted">{{ posts.created_at|date }}</small></p>
           </div>
         </div>

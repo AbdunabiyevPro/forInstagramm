@@ -1,10 +1,46 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
 </head>
 <body>
-$END$
+    <header class="container">
+        <div class="profile">
+            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Fphoto%2F10105000-concept-of-loneliness-and-disappointment-in-love-sad-man-sitting-element-of-the-picture-is-decorated-by-nasa&psig=AOvVaw1r7MKPU23J0y1aPW917pzw&ust=1708617770994000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMj9kKrnvIQDFQAAAAAdAAAAABAE" alt="profile_picture"/>
+        </div>
+            <div class="nick">
+                <div class="box">
+                    <h1>@{{ user.username }}</h1>
+                <button><a href="{% url 'users:update' %}">Редактиравоват профил</a> </button>
+                <button><a href="{% url 'users:follow' pk=user.id %}" ></a></button>
+                </div>
+
+              <div class="follow">
+                  <p>{{ user.post.count }} публикация</p>
+                  <p>73 подписчиков</p>
+                  <p>{{ request.user.whom.count }} подписок</p>
+
+              </div>
+              <p>{{ user.firstname }}</p>
+              <p class="desc">{{ user.bio }}</p>
+            </div>
+
+    </header>
+    {% for post in user.posts.all %}
+    <div class="card">
+        <img class="post-image" src="{{ post.image.url }}" alt="{{ post.title }}">
+        <div class="card-body">
+            <h1 class="post-title">{{ post.title }}</h1>
+            <p class="post-description">{{ post.description }}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+
+
 </body>
 </html>

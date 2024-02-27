@@ -7,11 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views.generic import UpdateView
 
 from conf.settings import EMAIL_HOST_USER
 from posts.models import PostModel
-from users.forms import RegistrationForm, LoginForm
-from users.models import VerificationCodeModel, UserModel
+from users.forms import RegistrationForm, LoginForm, UserUpdateForm
+from users.models import VerificationCodeModel, UserModel, FollowersModel
 
 
 def send_activation_email(email):
@@ -20,10 +21,11 @@ def send_activation_email(email):
     sender = EMAIL_HOST_USER
     recipient_list = [email]
     if send_mail(subject, code, sender, recipient_list):
-        new_code = VerificationCodeModel.objects.create(code=code,email=email)
+        new_code = VerificationCodeModel.objects.create(code=code, email=email)
         new_code.save()
         return True
     return False
+
 
 def register_view(request):
     if request.method == 'POST':
@@ -35,14 +37,12 @@ def register_view(request):
             send_activation_email(form.cleaned_data['email'])
 
             form.save()
-            return render(request,'verify-code.html')
+            return render(request, 'verify-code.html')
         else:
             text = form.errors
             return HttpResponse(text)
     else:
         return render(request, 'register.html')
-
-
 
 
 def login_view(request):
@@ -62,7 +62,6 @@ def login_view(request):
         return render(request, 'login.html')
 
 
-
 def logaut_view(request):
     if request.method == 'GET':
         logout(request)
@@ -78,6 +77,7 @@ def show_profile(request):
         }
         return render(request, 'show-profile.html', context=context)
 
+
 def verify_code_view(request):
     if request.method == 'POST':
         code = request.POST.get('code')
@@ -91,6 +91,45 @@ def verify_code_view(request):
         else:
             text = "Your code is invalid"
             return HttpResponse(text)
+
+
+@login_required()
+def update_view(request):
+    if request.method == 'POST':
+        user = request.user
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user:profile')
+        else:
+            return HttpResponse(form.errors)
+    else:
+        context = {'form': UserUpdateForm(instance=request.user)}
+        return render(request, 'update-profile.html', context)
+
+
+@login_required()
+def following_view(request, pk):
+    if request.user == 'GET':
+        which_user = request.user
+        whom_user = UserModel.objects.get(pk=pk)
+        following = FollowersModel.objects.filter(which_user=which_user, whom_user=whom_user)
+        if following:
+            following.delete()
+            return redirect("user:profile")
+        else:
+            following = FollowersModel.objects.create(which_user=which_user, whom_user=whom_user)
+            following.save()
+            return redirect('user:profile')
+
+
+def get_user_by_username(request, pk):
+    if request.method == 'GET':
+        user = UserModel.objects.get(pk=pk)
+        context = {
+            'user': user
+        }
+        return render(request, 'other-profile.html', context)
 
 
 

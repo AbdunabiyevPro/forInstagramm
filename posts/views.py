@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 
 from posts.forms import PostModelForm
 from posts.models import PostModel, CommentModel
+from users.models import UserModel
 
 
 def home_pages_view(request):

@@ -15,10 +15,18 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = UserModel
-        fields = ['username', 'first_name', 'last_name','email']
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=128)
     password = forms.CharField(max_length=128)
+
+
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserModel
+        fields = ['username', 'first_name', 'last_name', 'email', 'avatar', 'bio']

@@ -23,3 +23,12 @@ class VerificationCodeModel(models.Model):
     class Meta:
         verbose_name = 'Code'
         verbose_name_plural = 'Codes'
+
+
+class FollowersModel(models.Model):
+    which_user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='which')
+    whom_user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='whom')
+
+    class Meta:
+        verbose_name = "Follower"
+        verbose_name_plural = "Followers"
